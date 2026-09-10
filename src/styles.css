@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* —— 主题变量：默认日间，[data-theme="dark"] 覆盖为夜间 —— */
+:root {
+  --bg: #eef2f7;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-solid: #ffffff;
+  --border: #d8e0ea;
+  --text: #1e293b;
+  --text-soft: #475569;
+  --muted: #8ea0b5;
+  --hover: rgba(15, 23, 42, 0.06);
+  --active: rgba(13, 148, 136, 0.12);
+  --accent: #0d9488;
+  --accent-strong: #0f766e;
+  --accent-text: #0f766e;
+  --tooltip-bg: rgba(255, 255, 255, 0.96);
+  --tooltip-text: #1e293b;
+  --tooltip-border: rgba(100, 116, 139, 0.35);
+  --scroll-thumb: rgba(100, 116, 139, 0.35);
+  --scroll-thumb-hover: rgba(100, 116, 139, 0.6);
+  --scroll-track: transparent;
+  --overlay: rgba(238, 242, 247, 0.6);
+  --error-bg: rgba(254, 226, 226, 0.9);
+  --error-text: #b91c1c;
+}
+
+[data-theme="dark"] {
+  --bg: #020617;
+  --panel: rgba(15, 23, 42, 0.7);
+  --panel-solid: #0f172a;
+  --border: #1e293b;
+  --text: #e2e8f0;
+  --text-soft: #cbd5e1;
+  --muted: #64748b;
+  --hover: rgba(148, 163, 184, 0.08);
+  --active: rgba(20, 184, 166, 0.15);
+  --accent: #2dd4bf;
+  --accent-strong: #14b8a6;
+  --accent-text: #5eead4;
+  --tooltip-bg: rgba(15, 23, 42, 0.92);
+  --tooltip-text: #e2e8f0;
+  --tooltip-border: rgba(148, 163, 184, 0.35);
+  --scroll-thumb: rgba(148, 163, 184, 0.25);
+  --scroll-thumb-hover: rgba(148, 163, 184, 0.45);
+  --scroll-track: transparent;
+  --overlay: rgba(2, 6, 23, 0.6);
+  --error-bg: rgba(69, 10, 10, 0.85);
+  --error-text: #fca5a5;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* —— 滚动条美化 —— */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 3D 视口内由场景直接管理的元素 */
+.car-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--tooltip-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  z-index: 20;
+}
