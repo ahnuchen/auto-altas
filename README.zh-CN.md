@@ -57,8 +57,8 @@ node scripts/optimize-models.mjs xxx.glb
 
 ## 部署
 
-- 主站点部署在**根路径**下（`vite.config.ts` 已配置 `base: "/"`），开发环境访问 `http://localhost:3018/`，构建产物输出到 **`dist/`**
-- **GitHub Pages** — `pnpm deploy:pages` 会以 `/auto-atlas/` 为 base 构建（`pnpm build:pages`），并把 `dist/` 强推到 `github` 远程的 `gh-pages` 分支，访问地址 <https://ahnuchen.github.io/auto-altas/>。首次部署后需在仓库设置中启用 Pages：Settings → Pages → Source 选择 `gh-pages` 分支
+- **GitHub Pages（自动部署）** — 每次推送到 `master` 会触发 [Deploy to GitHub Pages](.github/workflows/deploy.yml) 工作流：以 `/auto-altas/` 为 base 构建（`pnpm build:pages`，与仓库名一致），并通过官方 Pages Actions 发布 `dist/`，访问地址 <https://ahnuchen.github.io/auto-altas/>
+- 本地开发走**根路径**（`vite.config.ts` 配置 `base: "/"`），开发环境访问 `http://localhost:3018/`，构建产物输出到 **`dist/`**
 - `vercel.json` 已为 `/models/*.glb` 配置一年 immutable 缓存与 brotli 编码头
 
 ## 目录结构

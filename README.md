@@ -57,8 +57,8 @@ What it does: **Meshopt geometry compression** (decoded at runtime by a local de
 
 ## Deployment
 
-- The main site is served from the **root path** (`base: "/"` is configured in `vite.config.ts`); in development visit `http://localhost:3018/`; build output goes to **`dist/`**
-- **GitHub Pages** — `pnpm deploy:pages` builds with the `/auto-atlas/` base (`pnpm build:pages`) and force-pushes `dist/` to the `gh-pages` branch of the `github` remote, served at <https://ahnuchen.github.io/auto-altas/>. On the first deploy, enable Pages in the repo: Settings → Pages → Source: `gh-pages` branch
+- **GitHub Pages (automatic)** — every push to `master` triggers the [Deploy to GitHub Pages](.github/workflows/deploy.yml) workflow: it builds with the `/auto-altas/` base (`pnpm build:pages`, matching the repo name) and publishes `dist/` via the official Pages Actions. Live at <https://ahnuchen.github.io/auto-altas/>
+- The dev/local site is served from the **root path** (`base: "/"` in `vite.config.ts`); visit `http://localhost:3018/` during development; build output goes to **`dist/`**
 - `vercel.json` configures one-year immutable caching and brotli encoding for `/models/*.glb`
 
 ## Project Structure
