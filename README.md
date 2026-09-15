@@ -1,83 +1,85 @@
-# Auto Atlas — 交互式汽车爆炸图鉴
+# Auto Atlas — Interactive Car Exploded-View Atlas
 
-> English documentation: [README.en.md](README.en.md)。
+> 中文文档见 [README.zh-CN.md](README.zh-CN.md)。
 
-基于真实汽车 GLB 模型的交互式 3D 爆炸图应用，使用 **React 19 + three.js + Vite + Tailwind CSS 4** 构建。支持车型切换、零件拾取、逐件显隐、日间/夜间主题、中英双语界面，爆炸滑块从径向分离平滑过渡到平面货架布局。
+**Live demo:** [https://ahnuchen.github.io/auto-altas/](https://ahnuchen.github.io/auto-altas/)
 
-## 功能特性
+An interactive 3D exploded-view application built on real production-car GLB models, powered by **React 19 + three.js + Vite + Tailwind CSS 4**. Features model switching, part picking, per-part visibility, day/night themes, a bilingual (Chinese/English) interface, and an explosion slider that blends from radial separation into a flat shelf layout.
 
-- **多车型切换** — 内置 3 款真实量产车模型，侧栏一键切换，按需加载
-- **爆炸分解** — 拖动滑块 0–65% 为径向爆炸（零件沿车身中心向外散开），65–100% 平滑过渡到地面货架布局（零件摊平铺开、互不重叠）
-- **零件交互** — 点击选中（高亮 + 详情面板）、悬停提示、逐件/分组显隐、隔离模式、名称搜索
-- **语义化命名** — 运行时从 GLB 场景图提取零件，按车型的命名规范适配为中英双语分组与零件名
-- **中英双语** — 一键切换界面语言，自动记忆选择（首次按浏览器语言推断），零件/分组名双语搜索
-- **日间/夜间主题** — 场景与 UI 双端同步切换，默认日间
-- **响应式** — 桌面双栏 / 移动端抽屉布局
+## Features
 
-## 内置车型
+- **Multi-model switching** — 3 real production cars built in, one-click switching in the sidebar with lazy loading
+- **Exploded view** — slider 0–65% is a radial explosion (parts fly outward from the body center); 65–100% smoothly transitions to a flat ground shelf layout (parts laid out without overlap)
+- **Part interaction** — click to select (highlight + detail panel), hover tooltips, per-part / per-group visibility, isolate mode, name search
+- **Semantic naming** — parts are extracted from the GLB scene graph at runtime and translated into bilingual groups/names via per-model naming adapters
+- **Bilingual UI** — one-click language switching (Chinese/English), remembered across visits (first visit infers from the browser language), with search matching names in both languages
+- **Day/night themes** — 3D scene and UI switch in sync, defaults to light
+- **Responsive** — dual-pane desktop layout / mobile drawer
 
-| 车型 | 零件数 | 三角面 | 模型来源 | 许可证 |
+## Included Models
+
+| Model | Parts | Triangles | Source | License |
 |---|---|---|---|---|
-| 奇瑞艾瑞泽 8 290T (2023) | 102 | 33 万 | Sketchfab 社区 | 以模型页标注为准 |
-| BMW M3 E30 (1986–1991) | 26 | 11.5 万 | Martin Trafas (TinoD2) | CC BY 4.0 |
-| Tesla Model 3 (2018) | 162 | 68 万 | Ameer Studio (uchiha.321abc) | CC BY 4.0 |
+| Chery Arrizo 8 290T (2023) | 102 | 332k | Sketchfab community | See model page |
+| BMW M3 E30 (1986–1991) | 26 | 115k | Martin Trafas (TinoD2) | CC BY 4.0 |
+| Tesla Model 3 (2018) | 162 | 684k | Ameer Studio (uchiha.321abc) | CC BY 4.0 |
 
-> 商用部署前请自行核实各模型页面的许可证条款。
+> Verify each model's license terms on its source page before commercial use.
 
-## 快速开始
+## Getting Started
 
 ```bash
-npm install
-npm run dev        # http://localhost:3018/
+pnpm install
+pnpm dev        # http://localhost:3018/
 ```
 
-其他命令：
+Other commands:
 
 ```bash
-npm run build      # 生产构建，输出到 dist/
-npm run check      # TypeScript 类型检查
-npm run inspect    # 解析 GLB 内部结构（节点树/材质/面数）
-npm run optimize   # 批量优化 GLB（见下文）
+pnpm build      # production build, outputs to dist/
+pnpm check      # TypeScript type check
+pnpm inspect    # dump GLB internals (node tree / materials / triangles)
+pnpm optimize   # batch GLB optimization (see below)
 ```
 
-## GLB 优化管线
+## GLB Optimization Pipeline
 
-仓库根目录存放未压缩的源 GLB（约 17–73 MB），`public/models/` 存放优化后的产物（约 2.8–3.7 MB）：
+Uncompressed source GLBs (17–73 MB) live in the repository root; optimized artifacts (2.8–3.7 MB) live in `public/models/`:
 
 ```bash
-# 全部处理
-npm run optimize
-# 只处理指定文件
+# Optimize all models
+pnpm optimize
+# Optimize a single file
 node scripts/optimize-models.mjs xxx.glb
 ```
 
-优化内容：**Meshopt 几何压缩**（运行时使用 three.js 本地解码器，无 CDN 依赖）+ **贴图转 WebP 并降采样至 2048px**。注意必须保留 `--flatten false --instance false`，否则场景层级被拍平，语义分组会失效。
+What it does: **Meshopt geometry compression** (decoded at runtime by a local decoder shipped with three.js — no CDN dependency) + **textures converted to WebP and downscaled to 2048px**. Keep `--flatten false --instance false`, otherwise the scene hierarchy is flattened and semantic grouping breaks.
 
-## 部署
+## Deployment
 
-- 站点部署在**根路径**下（`vite.config.ts` 已配置 `base: "/"`），开发环境访问 `http://localhost:3018/`
-- 构建产物输出到 **`dist/`**，将该目录内容上传到服务器 Web 根目录即可
-- `vercel.json` 已为 `/models/*.glb` 配置一年 immutable 缓存与 brotli 编码头
+- The main site is served from the **root path** (`base: "/"` is configured in `vite.config.ts`); in development visit `http://localhost:3018/`; build output goes to **`dist/`**
+- **GitHub Pages** — `pnpm deploy:pages` builds with the `/auto-atlas/` base (`pnpm build:pages`) and force-pushes `dist/` to the `gh-pages` branch of the `github` remote, served at <https://ahnuchen.github.io/auto-altas/>. On the first deploy, enable Pages in the repo: Settings → Pages → Source: `gh-pages` branch
+- `vercel.json` configures one-year immutable caching and brotli encoding for `/models/*.glb`
 
-## 目录结构
+## Project Structure
 
 ```
 auto-altas/
-├── public/models/          # 优化后的 GLB（部署产物）
+├── public/models/          # Optimized GLBs (deployment artifacts)
 ├── scripts/
-│   ├── inspect-glb.mjs     # 零依赖 GLB 结构解析（节点树/材质/面数）
-│   └── optimize-models.mjs # Meshopt + WebP 批量优化管线
+│   ├── inspect-glb.mjs     # Zero-dependency GLB inspector (node tree / materials / triangles)
+│   └── optimize-models.mjs # Meshopt + WebP batch optimization pipeline
 ├── src/
-│   ├── data/models.ts      # 车型目录与各车型命名/分组适配器
-│   ├── three/glb-scene.ts  # 场景核心：加载/归一化/爆炸/拾取/主题
-│   ├── components/         # Sidebar（车型切换/搜索/分组）与 DetailPanel
-│   └── App.tsx             # 状态编排与 UI 布局
-└── *.glb                   # 未压缩源模型（勿部署）
+│   ├── data/models.ts      # Model catalog and per-model naming/grouping adapters
+│   ├── three/glb-scene.ts  # Scene core: loading / normalization / explosion / picking / themes
+│   ├── components/         # Sidebar (model switching / search / groups) and DetailPanel
+│   └── App.tsx             # State orchestration and layout
+└── *.glb                   # Uncompressed source models (do not deploy)
 ```
 
-## 新增车型
+## Adding a New Model
 
-1. 将 GLB 源文件放到仓库根目录
-2. `node scripts/optimize-models.mjs <文件名>` 生成优化产物
-3. 在 `src/data/models.ts` 中添加 `ModelDef` 条目，按该模型的命名规范实现 `groupName` / `partName` 适配器
-4. 构建（`npm run build`）或 `npm run dev` 预览
+1. Place the GLB source file in the repository root
+2. Run `node scripts/optimize-models.mjs <filename>` to produce the optimized artifact
+3. Add a `ModelDef` entry in `src/data/models.ts`, implementing the `groupName` / `partName` adapters for that model's naming convention
+4. Build (`pnpm build`) or preview with `pnpm dev`

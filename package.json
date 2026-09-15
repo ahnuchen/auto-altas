@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3018",
     "build": "vite build",
+    "build:pages": "vite build --base=/auto-atlas/",
+    "deploy:pages": "pnpm run build:pages && gh-pages -d dist --nojekyll -o github -f -m \"deploy: update GitHub Pages\"",
     "check": "tsc --noEmit",
     "inspect": "node scripts/inspect-glb.mjs",
     "optimize": "node scripts/optimize-models.mjs"
@@ -22,6 +24,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.159.0",
     "@vitejs/plugin-react": "^6.0.2",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "vite": "^8.0.13"
