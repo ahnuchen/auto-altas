@@ -2,14 +2,15 @@
 
 > English documentation: [README.en.md](README.en.md)。
 
-基于真实汽车 GLB 模型的交互式 3D 爆炸图应用，使用 **React 19 + three.js + Vite + Tailwind CSS 4** 构建。支持车型切换、零件拾取、逐件显隐、日间/夜间主题，爆炸滑块从径向分离平滑过渡到平面货架布局。
+基于真实汽车 GLB 模型的交互式 3D 爆炸图应用，使用 **React 19 + three.js + Vite + Tailwind CSS 4** 构建。支持车型切换、零件拾取、逐件显隐、日间/夜间主题、中英双语界面，爆炸滑块从径向分离平滑过渡到平面货架布局。
 
 ## 功能特性
 
 - **多车型切换** — 内置 3 款真实量产车模型，侧栏一键切换，按需加载
 - **爆炸分解** — 拖动滑块 0–65% 为径向爆炸（零件沿车身中心向外散开），65–100% 平滑过渡到地面货架布局（零件摊平铺开、互不重叠）
 - **零件交互** — 点击选中（高亮 + 详情面板）、悬停提示、逐件/分组显隐、隔离模式、名称搜索
-- **语义化命名** — 运行时从 GLB 场景图提取零件，按车型的命名规范适配为中文分组与零件名
+- **语义化命名** — 运行时从 GLB 场景图提取零件，按车型的命名规范适配为中英双语分组与零件名
+- **中英双语** — 一键切换界面语言，自动记忆选择（首次按浏览器语言推断），零件/分组名双语搜索
 - **日间/夜间主题** — 场景与 UI 双端同步切换，默认日间
 - **响应式** — 桌面双栏 / 移动端抽屉布局
 
@@ -27,13 +28,13 @@
 
 ```bash
 npm install
-npm run dev        # http://localhost:3018/auto-atlas/
+npm run dev        # http://localhost:3018/
 ```
 
 其他命令：
 
 ```bash
-npm run build      # 生产构建，输出到 dist/auto-atlas/
+npm run build      # 生产构建，输出到 dist/
 npm run check      # TypeScript 类型检查
 npm run inspect    # 解析 GLB 内部结构（节点树/材质/面数）
 npm run optimize   # 批量优化 GLB（见下文）
@@ -54,9 +55,9 @@ node scripts/optimize-models.mjs xxx.glb
 
 ## 部署
 
-- 站点部署在 **`/auto-atlas/` 子路径**下（`vite.config.ts` 已配置 `base`），开发环境访问 `http://localhost:3018/auto-atlas/`
-- 构建产物输出到 **`dist/auto-atlas/`**，将该目录内容上传到服务器的 `auto-atlas` 目录即可
-- `vercel.json` 已为 `/auto-atlas/models/*.glb` 配置一年 immutable 缓存与 brotli 编码头
+- 站点部署在**根路径**下（`vite.config.ts` 已配置 `base: "/"`），开发环境访问 `http://localhost:3018/`
+- 构建产物输出到 **`dist/`**，将该目录内容上传到服务器 Web 根目录即可
+- `vercel.json` 已为 `/models/*.glb` 配置一年 immutable 缓存与 brotli 编码头
 
 ## 目录结构
 

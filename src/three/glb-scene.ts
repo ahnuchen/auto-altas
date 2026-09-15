@@ -4,11 +4,12 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { ModelDef } from "../data/models";
+import type { L10n } from "../i18n";
 
 export interface PartInfo {
   id: string;
-  name: string;
-  group: string;
+  name: L10n;
+  group: L10n;
   tris: number;
   verts: number;
   materials: string[];
@@ -266,7 +267,7 @@ export class GlbCarScene {
       const tris = geo.index ? Math.round(geo.index.count / 3) : Math.round(verts / 3);
       const matNames = (Array.isArray(mesh.material) ? mesh.material : [mesh.material])
         .filter(Boolean)
-        .map((m) => (m as T.MeshStandardMaterial).name || "未命名材质");
+        .map((m) => (m as T.MeshStandardMaterial).name);
       // 多材质共享会阻断逐件高亮，这里克隆为独立材质
       mesh.material = Array.isArray(mesh.material)
         ? mesh.material.map((m) => m.clone())
@@ -320,8 +321,14 @@ export class GlbCarScene {
     );
   }
 
-  /** 组内同名零件：对称件加（前左）等后缀，非对称件加序号 */
+  /** 组内同名零件：对称件加（前左）/(front-left) 等后缀，非对称件加序号 */
   private disambiguate() {
+    const DIR = {
+      front: { zh: "前", en: "front" } as L10n,
+      rear: { zh: "后", en: "rear" } as L10n,
+      left: { zh: "左", en: "left" } as L10n,
+      right: { zh: "右", en: "right" } as L10n,
+    };
     const box = new T.Box3().setFromObject(this.partsGroup);
     const center = box.getCenter(new T.Vector3());
     const size = box.getSize(new T.Vector3());
@@ -329,11 +336,11 @@ export class GlbCarScene {
     const eps = 0.1;
 
     const counts = new Map<string, number>();
-    for (const p of this.parts) counts.set(`${p.group}/${p.name}`, (counts.get(`${p.group}/${p.name}`) ?? 0) + 1);
+    for (const p of this.parts) counts.set(`${p.group.zh}/${p.name.zh}`, (counts.get(`${p.group.zh}/${p.name.zh}`) ?? 0) + 1);
 
     const idx = new Map<string, number>();
     for (const p of this.parts) {
-      const key = `${p.group}/${p.name}`;
+      const key = `${p.group.zh}/${p.name.zh}`;
       if ((counts.get(key) ?? 0) <= 1) continue;
       const mesh = this.meshById.get(p.id)!;
       const c = new T.Box3().setFromObject(mesh).getCenter(new T.Vector3());
@@ -343,14 +350,19 @@ export class GlbCarScene {
       const latC = longX ? center.z : center.x;
       const spanLon = longX ? size.x : size.z;
       const spanLat = longX ? size.z : size.x;
-      const lonLabel = lon > lonC + eps * spanLon ? "前" : lon < lonC - eps * spanLon ? "后" : "";
-      const latLabel = lat > latC + eps * spanLat ? "右" : lat < latC - eps * spanLat ? "左" : "";
+      const lonLabel = lon > lonC + eps * spanLon ? DIR.front : lon < lonC - eps * spanLon ? DIR.rear : null;
+      const latLabel = lat > latC + eps * spanLat ? DIR.right : lat < latC - eps * spanLat ? DIR.left : null;
       if (lonLabel || latLabel) {
-        p.name += `（${lonLabel}${latLabel}）`;
+        const lon2 = lonLabel ?? { zh: "", en: "" };
+        const lat2 = latLabel ?? { zh: "", en: "" };
+        p.name = {
+          zh: `${p.name.zh}（${lon2.zh}${lat2.zh}）`,
+          en: `${p.name.en} (${[lon2.en, lat2.en].filter(Boolean).join("-")})`,
+        };
       } else {
         const n = (idx.get(key) ?? 0) + 1;
         idx.set(key, n);
-        p.name += ` · ${n}`;
+        p.name = { zh: `${p.name.zh} · ${n}`, en: `${p.name.en} · ${n}` };
       }
     }
   }
@@ -362,11 +374,14 @@ export class GlbCarScene {
   private computeGridLayout() {
     const PAD = 0.45;
     const MAX_ROW = 14;
+    // 货架排序是 3D 布局，与界面语言无关，用中文名作为稳定键
     const order = new Map<string, number>();
-    for (const p of this.parts) if (!order.has(p.group)) order.set(p.group, order.size);
+    for (const p of this.parts) if (!order.has(p.group.zh)) order.set(p.group.zh, order.size);
     const sorted = [...this.parts].sort(
       (a, b) =>
-        order.get(a.group)! - order.get(b.group)! || a.name.localeCompare(b.name) || a.id.localeCompare(b.id),
+        order.get(a.group.zh)! - order.get(b.group.zh)! ||
+        a.name.zh.localeCompare(b.name.zh) ||
+        a.id.localeCompare(b.id),
     );
     const clamp = (v: number) => Math.max(0.2, v);
     const rows: { items: PartInfo[]; w: number; d: number }[] = [];

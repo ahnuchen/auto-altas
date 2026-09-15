@@ -1,5 +1,6 @@
 import type { ModelDef } from "../data/models";
 import type { PartInfo } from "../three/glb-scene";
+import { useI18n, tr } from "../i18n";
 
 interface DetailPanelProps {
   part: PartInfo | null;
@@ -10,6 +11,7 @@ interface DetailPanelProps {
 }
 
 export default function DetailPanel(props: DetailPanelProps) {
+  const { lang, t } = useI18n();
   const part = props.part;
   return (
     <aside className="flex w-80 shrink-0 flex-col border-l bg-(--panel) backdrop-blur" style={{ borderColor: "var(--border)" }}>
@@ -17,15 +19,15 @@ export default function DetailPanel(props: DetailPanelProps) {
         <>
           <header className="flex items-start justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
             <div>
-              <h2 className="text-sm font-semibold text-(--text)">{part.name}</h2>
+              <h2 className="text-sm font-semibold text-(--text)">{tr(part.name, lang)}</h2>
               <span className="mt-1 inline-block rounded-full bg-(--active) px-2 py-0.5 text-xs text-(--accent-text)">
-                {part.group}
+                {tr(part.group, lang)}
               </span>
             </div>
             <button
               className="rounded p-1 text-(--muted) hover:bg-(--hover)"
               onClick={props.onClose}
-              aria-label="关闭详情"
+              aria-label={t("closeDetail")}
             >
               ✕
             </button>
@@ -33,21 +35,23 @@ export default function DetailPanel(props: DetailPanelProps) {
           <div className="flex-1 px-4 py-3">
             <dl className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <dt className="text-(--muted)">三角面</dt>
+                <dt className="text-(--muted)">{t("tris")}</dt>
                 <dd className="tabular-nums text-(--text-soft)">{part.tris.toLocaleString()}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-(--muted)">顶点</dt>
+                <dt className="text-(--muted)">{t("verts")}</dt>
                 <dd className="tabular-nums text-(--text-soft)">{part.verts.toLocaleString()}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-(--muted)">材质</dt>
-                <dd className="max-w-40 truncate text-right text-(--text-soft)">{part.materials.join(", ")}</dd>
+                <dt className="text-(--muted)">{t("material")}</dt>
+                <dd className="max-w-40 truncate text-right text-(--text-soft)">
+                  {part.materials.map((m) => m || t("unnamedMaterial")).join(", ")}
+                </dd>
               </div>
             </dl>
             {props.model && (
               <p className="mt-4 text-[10px] leading-relaxed text-(--muted)">
-                来源：{props.model.credit} · {props.model.license}
+                {t("source", { credit: tr(props.model.credit, lang), license: tr(props.model.license, lang) })}
               </p>
             )}
           </div>
@@ -62,16 +66,14 @@ export default function DetailPanel(props: DetailPanelProps) {
               style={props.isolate ? undefined : { borderColor: "var(--border)" }}
               onClick={props.onToggleIsolate}
             >
-              {props.isolate ? "退出隔离模式" : "隔离查看此零件"}
+              {props.isolate ? t("isolateOn") : t("isolateOff")}
             </button>
           </div>
         </>
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-          <p className="text-sm text-(--text-soft)">尚未选中零件</p>
-          <p className="mt-2 text-xs leading-relaxed text-(--muted)">
-            在 3D 视图中点击任意零件，或使用左侧搜索定位。
-          </p>
+          <p className="text-sm text-(--text-soft)">{t("noPart")}</p>
+          <p className="mt-2 text-xs leading-relaxed text-(--muted)">{t("noPartHint")}</p>
         </div>
       )}
     </aside>

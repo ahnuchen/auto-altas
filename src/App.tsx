@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MODELS, MODEL_BY_ID } from "./data/models";
 import { GlbCarScene, type PartInfo, type ModelStats } from "./three/glb-scene";
+import { useI18n } from "./i18n";
 import Sidebar from "./components/Sidebar";
 import DetailPanel from "./components/DetailPanel";
 
@@ -9,6 +10,7 @@ export type Theme = "light" | "dark";
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<GlbCarScene | null>(null);
+  const { lang, t, toggleLang } = useI18n();
   const [modelId, setModelId] = useState(MODELS[0].id);
   const [theme, setTheme] = useState<Theme>("light"); // 默认日间模式
   const [parts, setParts] = useState<PartInfo[]>([]);
@@ -74,12 +76,13 @@ export default function App() {
   }, [selectedId, hidden, isolate, explode]);
 
   const groups = useMemo(() => {
+    // 以中文名为稳定键聚合（来自 GLB 路径推导，与语言无关）
     const map = new Map<string, PartInfo[]>();
     for (const p of parts) {
-      if (!map.has(p.group)) map.set(p.group, []);
-      map.get(p.group)!.push(p);
+      if (!map.has(p.group.zh)) map.set(p.group.zh, []);
+      map.get(p.group.zh)!.push(p);
     }
-    return [...map.entries()].map(([name, list]) => ({ name, parts: list }));
+    return [...map.entries()].map(([, list]) => ({ name: list[0].group, parts: list }));
   }, [parts]);
 
   const togglePart = (id: string) => {
@@ -168,31 +171,41 @@ export default function App() {
           style={{ borderColor: "var(--border)", background: "var(--panel)", color: "var(--text)" }}
           onClick={() => setSidebarOpen(true)}
         >
-          ☰ 零件
+          {t("partsButton")}
         </button>
 
-        {/* 主题切换 */}
-        <button
-          className="absolute right-3 top-3 z-10 rounded-full border px-3 py-1.5 text-sm backdrop-blur transition hover:opacity-80"
-          style={{ borderColor: "var(--border)", background: "var(--panel)", color: "var(--text)" }}
-          onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
-          title={theme === "light" ? "切换到夜间模式" : "切换到日间模式"}
-        >
-          {theme === "light" ? "☀️ 日间" : "🌙 夜间"}
-        </button>
+        {/* 语言 + 主题切换 */}
+        <div className="absolute right-3 top-3 z-10 flex gap-2">
+          <button
+            className="rounded-full border px-3 py-1.5 text-sm backdrop-blur transition hover:opacity-80"
+            style={{ borderColor: "var(--border)", background: "var(--panel)", color: "var(--text)" }}
+            onClick={toggleLang}
+            title={lang === "zh" ? t("toEn") : t("toZh")}
+          >
+            {lang === "zh" ? "EN" : "中文"}
+          </button>
+          <button
+            className="rounded-full border px-3 py-1.5 text-sm backdrop-blur transition hover:opacity-80"
+            style={{ borderColor: "var(--border)", background: "var(--panel)", color: "var(--text)" }}
+            onClick={() => setTheme((v) => (v === "light" ? "dark" : "light"))}
+            title={theme === "light" ? t("toDark") : t("toLight")}
+          >
+            {theme === "light" ? t("themeLight") : t("themeDark")}
+          </button>
+        </div>
 
         {/* 加载遮罩 */}
         {loading && !error && (
           <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm" style={{ background: "var(--overlay)" }}>
             <div className="w-64 text-center">
-              <p className="text-sm text-(--text-soft)">模型加载中…</p>
+              <p className="text-sm text-(--text-soft)">{t("loadingModel")}</p>
               <div className="mt-3 h-1.5 w-full overflow-hidden rounded bg-(--hover)">
                 <div
                   className="h-full rounded bg-(--accent) transition-all"
                   style={{ width: `${Math.max(4, progress * 100)}%` }}
                 />
               </div>
-              <p className="mt-2 text-xs text-(--muted)">GLB 体积较大，首次加载需要一点时间</p>
+              <p className="mt-2 text-xs text-(--muted)">{t("loadingHint")}</p>
             </div>
           </div>
         )}
@@ -202,7 +215,7 @@ export default function App() {
             className="absolute inset-x-0 top-16 z-10 mx-auto w-fit rounded-md border px-4 py-2 text-sm"
             style={{ background: "var(--error-bg)", color: "var(--error-text)", borderColor: "var(--error-text)" }}
           >
-            模型加载失败：{error}
+            {t("loadFailed")}：{error}
           </div>
         )}
 
@@ -211,7 +224,7 @@ export default function App() {
           className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border px-4 py-2 backdrop-blur"
           style={{ borderColor: "var(--border)", background: "var(--panel)" }}
         >
-          <span className="text-xs text-(--muted)">爆炸</span>
+          <span className="text-xs text-(--muted)">{t("explode")}</span>
           <input
             type="range"
             min={0}
@@ -219,7 +232,7 @@ export default function App() {
             value={Math.round(explode * 100)}
             onChange={(e) => setExplode(Number(e.target.value) / 100)}
             className="w-40 accent-(--accent) md:w-56"
-            aria-label="爆炸分解程度"
+            aria-label={t("explodeAria")}
           />
           <span className="w-8 text-right text-xs tabular-nums text-(--muted)">
             {Math.round(explode * 100)}%

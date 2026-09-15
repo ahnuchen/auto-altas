@@ -1,6 +1,6 @@
 # Auto Atlas — Interactive Car Exploded View
 
-An interactive 3D exploded-view application built on real production-car GLB models, powered by **React 19 + three.js + Vite + Tailwind CSS 4**. Features model switching, part picking, per-part visibility, day/night themes, and an explosion slider that blends from radial separation into a flat shelf layout.
+An interactive 3D exploded-view application built on real production-car GLB models, powered by **React 19 + three.js + Vite + Tailwind CSS 4**. Features model switching, part picking, per-part visibility, day/night themes, a bilingual (Chinese/English) interface, and an explosion slider that blends from radial separation into a flat shelf layout.
 
 > 中文文档见 [README.md](README.md)。
 
@@ -9,7 +9,8 @@ An interactive 3D exploded-view application built on real production-car GLB mod
 - **Multi-model switching** — 3 real production cars built in, one-click switching in the sidebar with lazy loading
 - **Exploded view** — slider 0–65% is a radial explosion (parts fly outward from the body center); 65–100% smoothly transitions to a flat ground shelf layout (parts laid out without overlap)
 - **Part interaction** — click to select (highlight + detail panel), hover tooltips, per-part / per-group visibility, isolate mode, name search
-- **Semantic naming** — parts are extracted from the GLB scene graph at runtime and translated into Chinese groups/names via per-model naming adapters
+- **Semantic naming** — parts are extracted from the GLB scene graph at runtime and translated into bilingual groups/names via per-model naming adapters
+- **Bilingual UI** — one-click language switching (Chinese/English), remembered across visits (first visit infers from the browser language), with search matching names in both languages
 - **Day/night themes** — 3D scene and UI switch in sync, defaults to light
 - **Responsive** — dual-pane desktop layout / mobile drawer
 
@@ -27,13 +28,13 @@ An interactive 3D exploded-view application built on real production-car GLB mod
 
 ```bash
 npm install
-npm run dev        # http://localhost:3018/auto-atlas/
+npm run dev        # http://localhost:3018/
 ```
 
 Other commands:
 
 ```bash
-npm run build      # production build, outputs to dist/auto-atlas/
+npm run build      # production build, outputs to dist/
 npm run check      # TypeScript type check
 npm run inspect    # dump GLB internals (node tree / materials / triangles)
 npm run optimize   # batch GLB optimization (see below)
@@ -54,9 +55,9 @@ What it does: **Meshopt geometry compression** (decoded at runtime by a local de
 
 ## Deployment
 
-- The site is served under the **`/auto-atlas/` sub-path** (`base` is configured in `vite.config.ts`); in development visit `http://localhost:3018/auto-atlas/`
-- Build output goes to **`dist/auto-atlas/`** — upload that directory's contents to the server's `auto-atlas` folder
-- `vercel.json` configures one-year immutable caching and brotli encoding for `/auto-atlas/models/*.glb`
+- The site is served from the **root path** (`base: "/"` is configured in `vite.config.ts`); in development visit `http://localhost:3018/`
+- Build output goes to **`dist/`** — upload that directory's contents to the web root
+- `vercel.json` configures one-year immutable caching and brotli encoding for `/models/*.glb`
 
 ## Project Structure
 

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { ModelDef } from "../data/models";
 import type { PartInfo } from "../three/glb-scene";
+import { useI18n, tr, type L10n } from "../i18n";
 
 export interface SidebarProps {
   models: ModelDef[];
@@ -8,7 +9,7 @@ export interface SidebarProps {
   onModelChange: (id: string) => void;
   loading: boolean;
   progress: number;
-  groups: { name: string; parts: PartInfo[] }[];
+  groups: { name: L10n; parts: PartInfo[] }[];
   totalParts: number;
   hidden: Set<string>;
   onTogglePart: (id: string) => void;
@@ -21,18 +22,19 @@ export interface SidebarProps {
 }
 
 export default function Sidebar(props: SidebarProps) {
+  const { lang, t } = useI18n();
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const model = props.models.find((m) => m.id === props.currentModel);
   const query = props.query.trim().toLowerCase();
 
   const filtered = useMemo(() => {
     if (!query) return props.groups;
+    // 中英文名称都参与匹配，任一语言命中的零件都能搜到
+    const hit = (v: L10n) => v.zh.toLowerCase().includes(query) || v.en.toLowerCase().includes(query);
     return props.groups
       .map((g) => ({
         name: g.name,
-        parts: g.parts.filter(
-          (p) => p.name.toLowerCase().includes(query) || g.name.toLowerCase().includes(query),
-        ),
+        parts: g.parts.filter((p) => hit(p.name) || hit(g.name)),
       }))
       .filter((g) => g.parts.length > 0);
   }, [props.groups, query]);
@@ -51,13 +53,13 @@ export default function Sidebar(props: SidebarProps) {
       <header className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
         <div>
           <h1 className="text-sm font-semibold text-(--text)">Auto Atlas</h1>
-          <p className="text-xs text-(--muted)">交互式汽车爆炸图鉴</p>
+          <p className="text-xs text-(--muted)">{t("appSubtitle")}</p>
         </div>
         {props.onClose && (
           <button
             className="rounded p-1 text-(--muted) hover:bg-(--hover)"
             onClick={props.onClose}
-            aria-label="关闭面板"
+            aria-label={t("closePanel")}
           >
             ✕
           </button>
@@ -66,7 +68,7 @@ export default function Sidebar(props: SidebarProps) {
 
       {/* 车型切换 */}
       <div className="border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
-        <p className="mb-2 text-xs font-medium text-(--text-soft)">车型</p>
+        <p className="mb-2 text-xs font-medium text-(--text-soft)">{t("vehicle")}</p>
         <div className="grid grid-cols-3 gap-1.5">
           {props.models.map((m) => (
             <button
@@ -79,17 +81,17 @@ export default function Sidebar(props: SidebarProps) {
               }
               onClick={() => props.onModelChange(m.id)}
             >
-              {m.short}
+              {tr(m.short, lang)}
             </button>
           ))}
         </div>
         {model && (
           <div className="mt-2 space-y-0.5 text-xs text-(--muted)">
-            <p>{model.name}</p>
+            <p>{tr(model.name, lang)}</p>
             <p>
               {props.loading
-                ? `加载中 ${Math.round(props.progress * 100)}%`
-                : `${props.totalParts} 个零件 · ${model.license}`}
+                ? t("loadingPct", { pct: Math.round(props.progress * 100) })
+                : t("partsCount", { n: props.totalParts, license: tr(model.license, lang) })}
             </p>
           </div>
         )}
@@ -107,7 +109,7 @@ export default function Sidebar(props: SidebarProps) {
         <input
           value={props.query}
           onChange={(e) => props.onQueryChange(e.target.value)}
-          placeholder="搜索零件…"
+          placeholder={t("searchPlaceholder")}
           className="w-full rounded-md border px-3 py-1.5 text-sm text-(--text) placeholder:text-(--muted) bg-(--hover) focus:border-(--accent) focus:outline-none"
           style={{ borderColor: "var(--border)" }}
         />
@@ -116,25 +118,25 @@ export default function Sidebar(props: SidebarProps) {
       {/* 分组零件列表 */}
       <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
         {filtered.length === 0 && (
-          <p className="px-2 text-sm text-(--muted)">{props.loading ? "模型加载中…" : "没有匹配的零件"}</p>
+          <p className="px-2 text-sm text-(--muted)">{props.loading ? t("loadingModel") : t("noMatch")}</p>
         )}
         {filtered.map((g) => {
-          const open = !collapsed.has(g.name);
+          const open = !collapsed.has(g.name.zh);
           const allHidden = g.parts.every((p) => props.hidden.has(p.id));
           return (
-            <div key={g.name} className="mb-0.5">
+            <div key={g.name.zh} className="mb-0.5">
               <div className="flex items-center gap-1 rounded px-2 py-1.5 hover:bg-(--hover)">
                 <button
                   className="flex flex-1 items-center gap-2 text-left text-sm text-(--text)"
-                  onClick={() => toggleCollapse(g.name)}
+                  onClick={() => toggleCollapse(g.name.zh)}
                 >
                   <span className="text-xs text-(--muted)">{open ? "▾" : "▸"}</span>
-                  <span className="flex-1 truncate">{g.name}</span>
+                  <span className="flex-1 truncate">{tr(g.name, lang)}</span>
                   <span className="text-xs text-(--muted)">{g.parts.length}</span>
                 </button>
                 <button
                   className="rounded p-1 text-xs text-(--muted) hover:bg-(--hover)"
-                  title={allHidden ? "显示该组" : "隐藏该组"}
+                  title={allHidden ? t("showGroup") : t("hideGroup")}
                   onClick={() => props.onToggleGroup(g.parts)}
                 >
                   {allHidden ? "🚫" : "👁"}
@@ -160,15 +162,15 @@ export default function Sidebar(props: SidebarProps) {
                             e.preventDefault();
                             props.onTogglePart(p.id);
                           }}
-                          title="点击选中 · 右键显示/隐藏"
+                          title={t("pickHint")}
                         >
-                          <span className="flex-1 truncate">{p.name}</span>
+                          <span className="flex-1 truncate">{tr(p.name, lang)}</span>
                           <span className="text-[10px] text-(--muted)">{p.tris.toLocaleString()}</span>
                         </button>
                         <button
                           className="rounded p-1 text-[10px] text-(--muted) hover:bg-(--hover)"
                           onClick={() => props.onTogglePart(p.id)}
-                          aria-label={hidden ? "显示零件" : "隐藏零件"}
+                          aria-label={hidden ? t("showPart") : t("hidePart")}
                         >
                           {hidden ? "🚫" : "👁"}
                         </button>
@@ -183,11 +185,11 @@ export default function Sidebar(props: SidebarProps) {
       </div>
 
       <footer className="border-t px-4 py-2 text-[10px] leading-relaxed text-(--muted)" style={{ borderColor: "var(--border)" }}>
-        点击选中零件 · 右键隐藏 · 拖拽旋转 · 底部滑块爆炸分解
+        {t("footerHelp")}
         {model && (
           <>
             <br />
-            模型：{model.credit}（{model.license}）
+            {t("modelCredit", { credit: tr(model.credit, lang), license: tr(model.license, lang) })}
           </>
         )}
       </footer>
