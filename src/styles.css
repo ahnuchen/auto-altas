@@ -2,6 +2,8 @@
 
 /* —— 主题变量：默认日间，[data-theme="dark"] 覆盖为夜间 —— */
 :root {
+  /* 原生滚动条/表单控件跟随明暗主题 */
+  color-scheme: light;
   --bg: #eef2f7;
   --panel: rgba(255, 255, 255, 0.88);
   --panel-solid: #ffffff;
@@ -26,6 +28,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg: #020617;
   --panel: rgba(15, 23, 42, 0.7);
   --panel-solid: #0f172a;
