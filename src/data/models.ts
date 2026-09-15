@@ -1,7 +1,7 @@
 // 车型目录与命名适配：不同来源的 GLB 命名规范差异很大，
 // 每个车型通过 groupName / partName 把场景图节点翻译成中文分组与零件名。
 
-// 部署在 /auto-atlas/ 子路径下，模型路径必须基于 BASE_URL 拼接
+// 模型路径基于 BASE_URL 拼接，与部署路径解耦（根路径部署时 BASE_URL 为 "/"）
 const MODEL_BASE = import.meta.env.BASE_URL + "models/";
 
 export interface ModelDef {

@@ -3,11 +3,11 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  // 部署在 /auto-atlas/ 子路径下（开发环境同样生效：http://localhost:3018/auto-atlas/）
-  base: "/auto-atlas/",
+  // 部署在根路径下（开发环境：http://localhost:3018/）
+  base: "/",
   build: {
-    // 产物输出到 dist/auto-atlas，上传该目录即可
-    outDir: "dist/auto-atlas",
+    // 产物输出到 dist，上传该目录即可
+    outDir: "dist",
   },
   plugins: [react(), tailwindcss()],
 });
