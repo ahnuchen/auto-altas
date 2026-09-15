@@ -2,7 +2,7 @@
 
 > English documentation: [README.md](README.md)。
 
-**在线体验：** <a href="https://ahnuchen.github.io/auto-altas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-altas/</a>
+**在线体验：** <a href="https://ahnuchen.github.io/auto-atlas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-atlas/</a>
 
 基于真实汽车 GLB 模型的交互式 3D 爆炸图应用，使用 **React 19 + three.js + Vite + Tailwind CSS 4** 构建。支持车型切换、零件拾取、逐件显隐、日间/夜间主题、中英双语界面，爆炸滑块从径向分离平滑过渡到平面货架布局。
 
@@ -57,7 +57,7 @@ node scripts/optimize-models.mjs xxx.glb
 
 ## 部署
 
-- **GitHub Pages（自动部署）** — 每次推送到 `master` 会触发 [Deploy to GitHub Pages](.github/workflows/deploy.yml) 工作流：以 `/auto-altas/` 为 base 构建（`pnpm build:pages`，与仓库名一致），并通过官方 Pages Actions 发布 `dist/`，访问地址 <https://ahnuchen.github.io/auto-altas/>
+- **GitHub Pages（自动部署）** — 每次推送到 `master` 会触发 [Deploy to GitHub Pages](.github/workflows/deploy.yml) 工作流：以 `/auto-atlas/` 为 base 构建（`pnpm build:pages`，与仓库名一致），并通过官方 Pages Actions 发布 `dist/`，访问地址 <https://ahnuchen.github.io/auto-atlas/>
 - 本地开发走**根路径**（`vite.config.ts` 配置 `base: "/"`），开发环境访问 `http://localhost:3018/`，构建产物输出到 **`dist/`**
 - `vercel.json` 已为 `/models/*.glb` 配置一年 immutable 缓存与 brotli 编码头
 

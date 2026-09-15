@@ -2,7 +2,7 @@
 
 > 中文文档见 [README.zh-CN.md](README.zh-CN.md)。
 
-**Live demo:** <a href="https://ahnuchen.github.io/auto-altas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-altas/</a>
+**Live demo:** <a href="https://ahnuchen.github.io/auto-atlas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-atlas/</a>
 
 An interactive 3D exploded-view application built on real production-car GLB models, powered by **React 19 + three.js + Vite + Tailwind CSS 4**. Features model switching, part picking, per-part visibility, day/night themes, a bilingual (Chinese/English) interface, and an explosion slider that blends from radial separation into a flat shelf layout.
 
@@ -57,7 +57,7 @@ What it does: **Meshopt geometry compression** (decoded at runtime by a local de
 
 ## Deployment
 
-- **GitHub Pages (automatic)** — every push to `master` triggers the [Deploy to GitHub Pages](.github/workflows/deploy.yml) workflow: it builds with the `/auto-altas/` base (`pnpm build:pages`, matching the repo name) and publishes `dist/` via the official Pages Actions. Live at <https://ahnuchen.github.io/auto-altas/>
+- **GitHub Pages (automatic)** — every push to `master` triggers the [Deploy to GitHub Pages](.github/workflows/deploy.yml) workflow: it builds with the `/auto-atlas/` base (`pnpm build:pages`, matching the repo name) and publishes `dist/` via the official Pages Actions. Live at <https://ahnuchen.github.io/auto-atlas/>
 - The dev/local site is served from the **root path** (`base: "/"` in `vite.config.ts`); visit `http://localhost:3018/` during development; build output goes to **`dist/`**
 - `vercel.json` configures one-year immutable caching and brotli encoding for `/models/*.glb`
 
