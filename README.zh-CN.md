@@ -2,7 +2,7 @@
 
 > English documentation: [README.md](README.md)。
 
-**在线体验：** [https://ahnuchen.github.io/auto-altas/](https://ahnuchen.github.io/auto-altas/)
+**在线体验：** <a href="https://ahnuchen.github.io/auto-altas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-altas/</a>
 
 基于真实汽车 GLB 模型的交互式 3D 爆炸图应用，使用 **React 19 + three.js + Vite + Tailwind CSS 4** 构建。支持车型切换、零件拾取、逐件显隐、日间/夜间主题、中英双语界面，爆炸滑块从径向分离平滑过渡到平面货架布局。
 

@@ -2,7 +2,7 @@
 
 > 中文文档见 [README.zh-CN.md](README.zh-CN.md)。
 
-**Live demo:** [https://ahnuchen.github.io/auto-altas/](https://ahnuchen.github.io/auto-altas/)
+**Live demo:** <a href="https://ahnuchen.github.io/auto-altas/" target="_blank" rel="noopener">https://ahnuchen.github.io/auto-altas/</a>
 
 An interactive 3D exploded-view application built on real production-car GLB models, powered by **React 19 + three.js + Vite + Tailwind CSS 4**. Features model switching, part picking, per-part visibility, day/night themes, a bilingual (Chinese/English) interface, and an explosion slider that blends from radial separation into a flat shelf layout.
 
