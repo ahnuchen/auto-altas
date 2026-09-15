@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0 --port 3018",
     "build": "vite build",
     "build:pages": "vite build --base=/auto-atlas/",
-    "deploy:pages": "pnpm run build:pages && gh-pages -d dist --nojekyll -o github -f -m \"deploy: update GitHub Pages\"",
+    "deploy:pages": "pnpm run build:pages && gh-pages -d dist --nojekyll -o github -m \"deploy: update GitHub Pages\"",
     "check": "tsc --noEmit",
     "inspect": "node scripts/inspect-glb.mjs",
     "optimize": "node scripts/optimize-models.mjs"
